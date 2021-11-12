@@ -25,8 +25,9 @@ async function run (){
         // console.log('connect to database', );
         const database = client.db("Aura")
         const productsCollection = database.collection("products")
+        const ordersCollection = database.collection("orders")
 
-
+        
         //get API
         app.get('/products', async(req, res) =>{
             const cursor = productsCollection.find({});
@@ -45,7 +46,7 @@ async function run (){
     //GET Single product
     app.get("/products/:id", async (req, res) => {
         const id = req.params.id;
-        console.log("getting specifing product", id);
+        console.log("specific product", id)
         const query = { _id: ObjectId(id) };
         const products = await productsCollection.findOne(query);
         res.json(products);
@@ -57,8 +58,45 @@ async function run (){
         const result = await productsCollection.deleteOne(query);
         res.json(result);
       });
-    }
-    finally{
+
+      //Order API
+      app.get('/orders', async(req, res) => { 
+        const cursor = ordersCollection.find({});
+        const order = await cursor.toArray();
+        res.send(order);
+    });
+
+    app.post('/orders', async(req, res) => {
+       const order = req.body;
+       console.log('hit the api');
+       const result = await ordersCollection.insertOne(order);
+       res.json(result); 
+    });
+    //DELETE orders API
+    app.delete("/deletePerches/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const result = await orderCollection.deleteOne(query);
+      res.json(result);
+    });
+    //Update Status API
+    app.patch("/updateStatus/:id", (req, res) => {
+      const id = ObjectId(req.params.id);
+      ordersCollection
+        .updateOne(
+          { _id: id },
+          {
+            $set: { purchesStatus: req.body.updateStatus },
+          }
+        )
+        .then((result) => {
+          // console.log(result);
+        });
+    });
+    
+
+
+    }finally{
         //await client.close()
     }
 }
