@@ -76,7 +76,7 @@ async function run (){
     app.delete("/deletePerches/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: ObjectId(id) };
-      const result = await orderCollection.deleteOne(query);
+      const result = await ordersCollection.deleteOne(query);
       res.json(result);
     });
     //Update Status API
