@@ -26,6 +26,8 @@ async function run (){
         const database = client.db("Aura")
         const productsCollection = database.collection("products")
         const ordersCollection = database.collection("orders")
+        const adminCollection= database.collection("admin")
+        const reviewCollection = database.collection("review")
 
         
         //get API
@@ -72,6 +74,21 @@ async function run (){
        const result = await ordersCollection.insertOne(order);
        res.json(result); 
     });
+
+    // review 
+    app.get('/review', async(req, res) => { 
+      const cursor = reviewCollection.find({});
+      const review = await cursor.toArray();
+      res.send(review);
+  });
+
+  app.post('/review', async(req, res) => {
+     const review = req.body;
+     //console.log('hit the api');
+     const result = await reviewCollection.insertOne(review);
+     res.json(result); 
+  })
+
     //DELETE orders API
     app.delete("/deletePerches/:id", async (req, res) => {
       const id = req.params.id;
@@ -92,6 +109,20 @@ async function run (){
         .then((result) => {
           // console.log(result);
         });
+    });
+    //Admin POST API
+    app.post("/admin", async (req, res) => {
+      const admin = req.body;
+
+      const result = await adminCollection.insertOne(admin);
+      // console.log(result);
+      res.json(result);
+    });
+    //Admin Get API
+    app.get("/admin", async (req, res) => {
+      const cursor = adminCollection.find({});
+      const admin = await cursor.toArray();
+      res.send(admin);
     });
     
 
