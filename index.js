@@ -74,6 +74,13 @@ async function run (){
        const result = await ordersCollection.insertOne(order);
        res.json(result); 
     });
+    app.get("/ordersEmail", (req, res) => {
+      ordersCollection
+        .find({ email: req.query.email })
+        .toArray((err, documents) => {
+          res.send(documents);
+        });
+    });
 
     // review 
     app.get('/review', async(req, res) => { 
@@ -120,9 +127,9 @@ async function run (){
     });
     //Admin Get API
     app.get("/admin", async (req, res) => {
-      const cursor = adminCollection.find({});
-      const admin = await cursor.toArray();
-      res.send(admin);
+      adminCollection.find({ email: req.query.email }).toArray((err, admin) => {
+        res.send(admin);
+      });
     });
     
 
